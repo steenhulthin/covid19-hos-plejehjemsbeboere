@@ -409,12 +409,13 @@ def build_comparison_figure(data: pd.DataFrame, metric_name: str, chart_title: s
 
 
 def latest_kpi_row(filtered_data: pd.DataFrame) -> pd.Series:
-    kpi_columns = [
+    national_data_columns = [
         f"{METRIC_TESTED} ({COUNTRY_LABEL})",
-        f"{METRIC_POSITIVE} ({CARE_HOME_LABEL})",
+        f"{METRIC_POSITIVE} ({COUNTRY_LABEL})",
+        f"{METRIC_ADMISSIONS} ({COUNTRY_LABEL})",
         f"{METRIC_DEATHS} ({COUNTRY_LABEL})",
     ]
-    available_rows = filtered_data.dropna(subset=kpi_columns, how="all")
+    available_rows = filtered_data.dropna(subset=national_data_columns, how="all")
     if available_rows.empty:
         return filtered_data.iloc[-1]
     return available_rows.iloc[-1]

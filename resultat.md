@@ -29,4 +29,4 @@ Supplerende kravspecifikation:
 
 Brugerflade/layout:
 - Ved kildeangivelse skal der linkes til "[SSI - Statens Serum Institut](https://ssi.dk) via [steenhulthin's infectious-diseases-data](https://steenhulthin.github.io/infectious-diseases-data/)". Der linkes til kilder for antagelserne om befolknings- og beboer-tal. 
-- KPI vises kun for seneste uge, hvor der er data tilgængeligt.
+- KPI vises kun for seneste uge, hvor der er data tilgængeligt fra plejehjem-data. 
