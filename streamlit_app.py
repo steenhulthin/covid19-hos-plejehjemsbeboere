@@ -427,7 +427,7 @@ def main() -> None:
             "Testede pr. 100.000 borgere",
             "Testede pr. 100.000 borgere",
         )
-        st.plotly_chart(test_figure, use_container_width=True)
+        st.plotly_chart(test_figure, width="stretch")
 
     with chart_two:
         positive_figure = build_comparison_figure(
@@ -435,7 +435,7 @@ def main() -> None:
             "Positive pr. 100.000 borgere",
             "Positive pr. 100.000 borgere",
         )
-        st.plotly_chart(positive_figure, use_container_width=True)
+        st.plotly_chart(positive_figure, width="stretch")
 
     st.caption(
         "Kilde: infectious-diseases-data. Plejehjemstal er normaliseret til 55.600 beboere."
