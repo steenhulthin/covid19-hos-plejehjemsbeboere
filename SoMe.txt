@@ -1,0 +1,8 @@
+Passede vi i Danmark godt på de svageste* under Covid-19 pandemien? 🦠 😷
+
+#DagensDashboard er ligesom i går fra mit professionelle område. 
+
+🔎 Vurder det selv her:
+https://covid19-hos-plejehjemsbeboere.streamlit.app/
+
+ *svageste i forhold tilstandskraft mod covid-19
