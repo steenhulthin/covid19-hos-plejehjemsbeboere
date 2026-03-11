@@ -1,0 +1,42 @@
+[theme]
+showSidebarBorder = true
+baseRadius = "large"
+font = "sans-serif"
+chartCategoricalColors = ["#2563eb", "#dc2626", "#059669", "#d97706"]
+borderColor = "#cbd5e1"
+
+[theme.light]
+primaryColor = "#2563eb"
+backgroundColor = "#f8fbfc"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#11212a"
+redColor = "#dc2626"
+orangeColor = "#ea580c"
+yellowColor = "#ca8a04"
+greenColor = "#059669"
+blueColor = "#2563eb"
+violetColor = "#7c3aed"
+grayColor = "#6b7280"
+
+[theme.light.sidebar]
+backgroundColor = "#f3f7fb"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#11212a"
+
+[theme.dark]
+primaryColor = "#60a5fa"
+backgroundColor = "#0f172a"
+secondaryBackgroundColor = "#111827"
+textColor = "#7788dd"
+redColor = "#f87171"
+orangeColor = "#fb923c"
+yellowColor = "#facc15"
+greenColor = "#34d399"
+blueColor = "#60a5fa"
+violetColor = "#a78bfa"
+grayColor = "#94a3b8"
+
+[theme.dark.sidebar]
+backgroundColor = "#111827"
+secondaryBackgroundColor = "#0f172a"
+textColor = "#7788dd"
