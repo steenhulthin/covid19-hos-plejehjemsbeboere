@@ -4,7 +4,7 @@ Det skal hente data fra <https://steenhulthin.github.io/infectious-diseases-data
 
 Lande-data skal summeres på køn. M og K skal sammenlægges, og tal i kolonner med "pr. 100.000 borgere" skal aggregeres som gennemsnit. Vær opmærksom på at der kan være manglende uger og/eller manglende køn; de skal udfyldes som 0. Vi antager, at der er næsten samme antal kvinder (K) og mænd (M) i befolkningen.
 
-For dødsfald-lande-data skal antal "Døde" summeres for hele landet (alle "Regionkode") og på uge-niveau (data er på dagsligt niveau baseret på "Dato" - ISO-uger skal benyttes (ugen er fra mandag til søndag)). "Kummuleret antal døde" kolonnen må ikke benyttes. Det skal antages at der er 6.000.000 mennesker i hele landet. Der skal beregnes en normaliseret "Døde pr. 100.000 borgere" ud fra "Døde" og antagelse om antal mennesker i landet. 
+For dødsfald-lande-data skal antal "Døde" summeres for hele landet (alle "Regionkode") og på uge-niveau (data er på dagsligt niveau baseret på "Dato" - ISO-uger skal benyttes (ugen er fra mandag til søndag)). "Kummuleret antal døde" kolonnen må ikke benyttes. Det skal antages at der er 6.000.000 mennesker i hele landet (baseret på <https://www.dst.dk/da/Statistik/udgivelser/NytHtml?cid=55902>). Der skal beregnes en normaliseret "Døde pr. 100.000 borgere" ud fra "Døde" og antagelse om antal mennesker i landet. 
 
 Lande-data og dødsfald-lande-data skal kombineres til et datasæt baseret på ugen. 
 
