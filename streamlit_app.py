@@ -20,23 +20,36 @@ DEATHS_DATA_URL = (
     "https://steenhulthin.github.io/infectious-diseases-data/"
     "07_antal_doede_pr_dag_pr_region.csv"
 )
+INFECTIOUS_DISEASES_DATA_URL = "https://steenhulthin.github.io/infectious-diseases-data/"
+SSI_URL = "https://ssi.dk"
+KL_CARE_HOME_URL = (
+    "https://www.kl.dk/analyser/analyser/social-sundhed-og-aeldre/plejehjemsbeboere"
+)
+DST_POPULATION_URL = "https://www.dst.dk/da/Statistik/udgivelser/NytHtml?cid=55902"
+
 CARE_HOME_POPULATION = 55_600
 NATIONAL_POPULATION = 6_000_000
+
 COUNTRY_LABEL = "Hele landet"
 CARE_HOME_LABEL = "Plejehjem"
+
 COL_WEEK = "Uge"
 COL_GENDER = "Køn"
 COL_YEAR = "År"
 COL_DATE = "Dato"
+
 METRIC_TESTED = "Testede pr. 100.000 borgere"
 METRIC_POSITIVE = "Positive pr. 100.000 borgere"
 METRIC_ADMISSIONS = "Nye indlæggelser pr. 100.000 borgere"
 METRIC_DEATHS = "Døde pr. 100.000 borgere"
+RAW_DEATHS_COLUMN = "Døde"
+
 NATIONAL_METRICS = [
     METRIC_TESTED,
     METRIC_POSITIVE,
     METRIC_ADMISSIONS,
 ]
+
 NATIONAL_COLUMN_KEYS = {
     "uge": COL_WEEK,
     "koen": COL_GENDER,
@@ -44,15 +57,18 @@ NATIONAL_COLUMN_KEYS = {
     "positive pr. 100.000 borgere": METRIC_POSITIVE,
     "nye indlaeggelser pr. 100.000 borgere": METRIC_ADMISSIONS,
 }
+
 CARE_HOME_SOURCE_COLUMNS = {
     "antal tests blandt beboere": METRIC_TESTED,
     "bekraeftede tilfaelde beboere": METRIC_POSITIVE,
     "doedsfald blandt bekraeftede beboere": METRIC_DEATHS,
 }
+
 DEATHS_COLUMN_KEYS = {
     "dato": COL_DATE,
-    "doede": "Døde",
+    "doede": RAW_DEATHS_COLUMN,
 }
+
 DANISH_CHARACTER_REPLACEMENTS = str.maketrans(
     {
         "æ": "ae",
@@ -63,6 +79,7 @@ DANISH_CHARACTER_REPLACEMENTS = str.maketrans(
         "Å": "aa",
     }
 )
+
 COMMON_MOJIBAKE_REPLACEMENTS = {
     "Ã¦": "æ",
     "Ã†": "Æ",
@@ -71,6 +88,7 @@ COMMON_MOJIBAKE_REPLACEMENTS = {
     "Ã¥": "å",
     "Ã…": "Å",
 }
+
 CHART_COLORS = {
     COUNTRY_LABEL: "#0f766e",
     CARE_HOME_LABEL: "#ea580c",
@@ -187,7 +205,7 @@ def rename_columns_from_normalized_map(
     normalized_name_map: dict[str, str],
 ) -> pd.DataFrame:
     normalized_columns = {normalize_label(column): column for column in frame.columns}
-    rename_map = {}
+    rename_map: dict[str, str] = {}
     for normalized_name, target_name in normalized_name_map.items():
         match = normalized_columns.get(normalized_name)
         if match is None:
@@ -249,7 +267,7 @@ def load_national_deaths_data() -> pd.DataFrame:
     deaths = read_semicolon_csv(DEATHS_DATA_URL)
     deaths = rename_columns_from_normalized_map(deaths, DEATHS_COLUMN_KEYS)
     deaths[COL_DATE] = pd.to_datetime(deaths[COL_DATE], errors="coerce")
-    deaths["Døde"] = pd.to_numeric(deaths["Døde"], errors="coerce").fillna(0)
+    deaths[RAW_DEATHS_COLUMN] = pd.to_numeric(deaths[RAW_DEATHS_COLUMN], errors="coerce").fillna(0)
     deaths = deaths[deaths[COL_DATE].notna()].copy()
 
     iso_calendar = deaths[COL_DATE].dt.isocalendar()
@@ -259,11 +277,11 @@ def load_national_deaths_data() -> pd.DataFrame:
     ]
 
     weekly_deaths = (
-        deaths.groupby("week_start", as_index=False)["Døde"]
+        deaths.groupby("week_start", as_index=False)[RAW_DEATHS_COLUMN]
         .sum()
         .sort_values("week_start")
     )
-    weekly_deaths[METRIC_DEATHS] = weekly_deaths["Døde"] / NATIONAL_POPULATION * 100_000
+    weekly_deaths[METRIC_DEATHS] = weekly_deaths[RAW_DEATHS_COLUMN] / NATIONAL_POPULATION * 100_000
     weekly_deaths = weekly_deaths[["week_start", METRIC_DEATHS]]
     return fill_missing_weeks(weekly_deaths, [METRIC_DEATHS])
 
@@ -325,18 +343,19 @@ def build_dashboard_data() -> pd.DataFrame:
     combined[COL_WEEK] = combined["week_start"].map(week_label_from_timestamp)
     combined = combined.sort_values("week_start").reset_index(drop=True)
 
-    ordered_columns = [
-        "week_start",
-        COL_WEEK,
-        f"{METRIC_TESTED} ({COUNTRY_LABEL})",
-        f"{METRIC_POSITIVE} ({COUNTRY_LABEL})",
-        f"{METRIC_ADMISSIONS} ({COUNTRY_LABEL})",
-        f"{METRIC_DEATHS} ({COUNTRY_LABEL})",
-        f"{METRIC_TESTED} ({CARE_HOME_LABEL})",
-        f"{METRIC_POSITIVE} ({CARE_HOME_LABEL})",
-        f"{METRIC_DEATHS} ({CARE_HOME_LABEL})",
+    return combined[
+        [
+            "week_start",
+            COL_WEEK,
+            f"{METRIC_TESTED} ({COUNTRY_LABEL})",
+            f"{METRIC_POSITIVE} ({COUNTRY_LABEL})",
+            f"{METRIC_ADMISSIONS} ({COUNTRY_LABEL})",
+            f"{METRIC_DEATHS} ({COUNTRY_LABEL})",
+            f"{METRIC_TESTED} ({CARE_HOME_LABEL})",
+            f"{METRIC_POSITIVE} ({CARE_HOME_LABEL})",
+            f"{METRIC_DEATHS} ({CARE_HOME_LABEL})",
+        ]
     ]
-    return combined[ordered_columns]
 
 
 def build_comparison_figure(data: pd.DataFrame, metric_name: str, chart_title: str) -> go.Figure:
@@ -389,6 +408,18 @@ def build_comparison_figure(data: pd.DataFrame, metric_name: str, chart_title: s
     return figure
 
 
+def latest_kpi_row(filtered_data: pd.DataFrame) -> pd.Series:
+    kpi_columns = [
+        f"{METRIC_TESTED} ({COUNTRY_LABEL})",
+        f"{METRIC_POSITIVE} ({CARE_HOME_LABEL})",
+        f"{METRIC_DEATHS} ({COUNTRY_LABEL})",
+    ]
+    available_rows = filtered_data.dropna(subset=kpi_columns, how="all")
+    if available_rows.empty:
+        return filtered_data.iloc[-1]
+    return available_rows.iloc[-1]
+
+
 def render_header() -> None:
     st.markdown(
         """
@@ -407,7 +438,7 @@ def render_header() -> None:
 
 
 def render_metrics(filtered_data: pd.DataFrame) -> None:
-    latest = filtered_data.iloc[-1]
+    latest = latest_kpi_row(filtered_data)
     st.markdown('<div class="metric-shell">', unsafe_allow_html=True)
     column_one, column_two, column_three, column_four = st.columns(4)
     column_one.metric("Seneste uge", latest[COL_WEEK])
@@ -424,6 +455,18 @@ def render_metrics(filtered_data: pd.DataFrame) -> None:
         format_rate(latest[f"{METRIC_DEATHS} ({COUNTRY_LABEL})"]),
     )
     st.markdown("</div>", unsafe_allow_html=True)
+
+
+def render_sources() -> None:
+    st.markdown(
+        (
+            "Kilde: [SSI - Statens Serum Institut]"
+            f"({SSI_URL}) via [steenhulthin's infectious-diseases-data]"
+            f"({INFECTIOUS_DISEASES_DATA_URL}). "
+            f"Antagelse om 55.600 plejehjemsbeboere: [KL]({KL_CARE_HOME_URL}). "
+            f"Antagelse om 6.000.000 borgere i hele landet: [Danmarks Statistik]({DST_POPULATION_URL})."
+        )
+    )
 
 
 def main() -> None:
@@ -487,10 +530,7 @@ def main() -> None:
     )
     st.plotly_chart(deaths_figure, width="stretch")
 
-    st.caption(
-        "Kilde: infectious-diseases-data. Plejehjemstal er normaliseret til 55.600 beboere, "
-        "og landsdødsfald er normaliseret til 6.000.000 borgere."
-    )
+    render_sources()
 
 
 if __name__ == "__main__":
