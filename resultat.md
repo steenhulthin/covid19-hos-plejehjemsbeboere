@@ -30,4 +30,4 @@ Supplerende kravspecifikation:
 Brugerflade/layout:
 - Ved kildeangivelse skal der linkes til "[SSI - Statens Serum Institut](https://ssi.dk) via [steenhulthin's infectious-diseases-data](https://steenhulthin.github.io/infectious-diseases-data/)". Der linkes til kilder for antagelserne om befolknings- og beboer-tal. 
 - KPI vises kun for seneste uge, hvor der er data tilgængeligt fra plejehjem-data. 
-- Brug farver som er synlige i både light og dark mode setting i streamlit. Følg guidelines fra <https://docs.streamlit.io/develop/concepts/configuration/theming>
+- Brug farver som er synlige i både light og dark mode setting i streamlit. Følg guidelines fra <https://docs.streamlit.io/develop/concepts/configuration/theming>. Alt theming skal så vidt muligt sættes i config.toml.
