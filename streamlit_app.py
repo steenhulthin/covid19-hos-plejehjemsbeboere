@@ -20,12 +20,12 @@ CARE_HOME_POPULATION = 55_600
 COUNTRY_LABEL = "Hele landet"
 CARE_HOME_LABEL = "Plejehjem"
 COL_WEEK = "Uge"
-COL_GENDER = "K\u00f8n"
-COL_YEAR = "\u00c5r"
+COL_GENDER = "Køn"
+COL_YEAR = "År"
 NATIONAL_METRICS = [
     "Testede pr. 100.000 borgere",
     "Positive pr. 100.000 borgere",
-    "Nye indl\u00e6ggelser pr. 100.000 borgere",
+    "Nye indlæggelser pr. 100.000 borgere",
 ]
 NATIONAL_COLUMN_KEYS = {
     "uge": COL_WEEK,
@@ -37,24 +37,25 @@ NATIONAL_COLUMN_KEYS = {
 CARE_HOME_SOURCE_COLUMNS = {
     "antal tests blandt beboere": "Testede pr. 100.000 borgere",
     "bekraeftede tilfaelde beboere": "Positive pr. 100.000 borgere",
-    "doedsfald blandt bekraeftede beboere": "D\u00f8dsfald pr. 100.000 borgere",
+    "doedsfald blandt bekraeftede beboere": "Dødsfald pr. 100.000 borgere",
 }
 DANISH_CHARACTER_REPLACEMENTS = str.maketrans(
     {
-        "\u00e6": "ae",
-        "\u00c6": "ae",
-        "\u00f8": "oe",
-        "\u00d8": "oe",
-        "\u00e5": "aa",
-        "\u00c5": "aa",
+        "æ": "ae",
+        "Æ": "ae",
+        "ø": "oe",
+        "Ø": "oe",
+        "å": "aa",
+        "Å": "aa",
     }
 )
 COMMON_MOJIBAKE_REPLACEMENTS = {
-    "\u00c3\u00a6": "\u00e6",
-    "\u00c3\u0098": "\u00d8",
-    "\u00c3\u00b8": "\u00f8",
-    "\u00c3\u0085": "\u00c5",
-    "\u00c3\u00a5": "\u00e5",
+    "Ã¦": "æ",
+    "Ã†": "Æ",
+    "Ã¸": "ø",
+    "Ã˜": "Ø",
+    "Ã¥": "å",
+    "Ã…": "Å",
 }
 CHART_COLORS = {
     COUNTRY_LABEL: "#0f766e",
@@ -64,7 +65,7 @@ CHART_COLORS = {
 
 st.set_page_config(
     page_title="Covid-19 hos plejehjemsbeboere i Danmark",
-    page_icon="\U0001F9A0",
+    page_icon="🦠",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -179,7 +180,7 @@ def rename_columns_from_normalized_map(
     for normalized_name, target_name in normalized_name_map.items():
         match = normalized_columns.get(normalized_name)
         if match is None:
-            raise KeyError(f"Kolonnen '{target_name}' blev ikke fundet i datas\u00e6ttet.")
+            raise KeyError(f"Kolonnen '{target_name}' blev ikke fundet i datasættet.")
         rename_map[match] = target_name
     return frame.rename(columns=rename_map)
 
@@ -285,10 +286,10 @@ def build_dashboard_data() -> pd.DataFrame:
             COL_WEEK,
             f"Testede pr. 100.000 borgere ({COUNTRY_LABEL})",
             f"Positive pr. 100.000 borgere ({COUNTRY_LABEL})",
-            f"Nye indl\u00e6ggelser pr. 100.000 borgere ({COUNTRY_LABEL})",
+            f"Nye indlæggelser pr. 100.000 borgere ({COUNTRY_LABEL})",
             f"Testede pr. 100.000 borgere ({CARE_HOME_LABEL})",
             f"Positive pr. 100.000 borgere ({CARE_HOME_LABEL})",
-            f"D\u00f8dsfald pr. 100.000 borgere ({CARE_HOME_LABEL})",
+            f"Dødsfald pr. 100.000 borgere ({CARE_HOME_LABEL})",
         ]
     ]
 
@@ -350,7 +351,7 @@ def render_header() -> None:
             <h1>Covid-19 hos plejehjemsbeboere i Danmark</h1>
             <p>
                 Sammenligning af smitteudviklingen i hele landet og blandt plejehjemsbeboere.
-                Landskurverne er aggregeret pa tværs af køn som gennemsnit af rater pr. 100.000,
+                Landskurverne er aggregeret på tværs af køn som gennemsnit af rater pr. 100.000,
                 mens plejehjemstal er normaliseret med 55.600 beboere.
             </p>
         </section>
