@@ -24,6 +24,7 @@ På dashboardet skal der være følgende filtre:
 Supplerende kravspecifikation:
 
 - Kolonnenavne fra kildedata skal matches robust, også når danske bogstaver forekommer som `ae/oe/aa`, som rigtige danske tegn, eller som lette encoding-afvigelser.
+- Danske bogstaver i tekst og kode skal være danske. Og kun anderledes hvis det påvirker robustheden. 
 - Rækker som ikke repræsenterer en rigtig ugeobservation, for eksempel opsummeringsrækker som `I alt`, skal ignoreres i databehandlingen.
 - Eventuelle `timestamp_...`-kolonner fra kildedata er metadata og må ikke indgå i visualiseringer eller aggregeringer.
 
