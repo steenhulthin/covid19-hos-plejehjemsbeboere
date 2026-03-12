@@ -410,9 +410,9 @@ def main() -> None:
 
     week_options = dashboard_data[COL_WEEK].tolist()
 
-    st.sidebar.header("Filtre")
+    st.sidebar.header("Vælg periode")
     selected_period = st.sidebar.select_slider(
-        "Periode",
+        "Periode i uger",
         options=week_options,
         value=(week_options[0], week_options[-1]),
     )
