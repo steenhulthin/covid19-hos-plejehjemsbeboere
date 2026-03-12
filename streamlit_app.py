@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
+from pathlib import Path
 import unicodedata
 
 import pandas as pd
@@ -416,6 +417,16 @@ def render_sources() -> None:
     )
 
 
+@st.cache_data(show_spinner=False)
+def load_some_text() -> str:
+    return Path("SoMe.txt").read_text(encoding="utf-8", errors="replace")
+
+
+def render_some_expander() -> None:
+    with st.expander("SoMe opslag"):
+        st.text(load_some_text())
+
+
 def main() -> None:
     render_header()
 
@@ -478,6 +489,7 @@ def main() -> None:
     st.plotly_chart(deaths_figure, width="stretch")
 
     render_sources()
+    render_some_expander()
 
 
 if __name__ == "__main__":
