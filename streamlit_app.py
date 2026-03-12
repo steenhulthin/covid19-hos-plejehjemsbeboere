@@ -338,15 +338,15 @@ def build_comparison_figure(data: pd.DataFrame, metric_name: str, chart_title: s
     return figure
 
 
-def latest_kpi_row(filtered_data: pd.DataFrame) -> pd.Series:
+def latest_kpi_row(data: pd.DataFrame) -> pd.Series:
     care_home_data_columns = [
         f"{METRIC_TESTED} ({CARE_HOME_LABEL})",
         f"{METRIC_POSITIVE} ({CARE_HOME_LABEL})",
         f"{METRIC_DEATHS} ({CARE_HOME_LABEL})",
     ]
-    available_rows = filtered_data.dropna(subset=care_home_data_columns, how="all")
+    available_rows = data.dropna(subset=care_home_data_columns, how="all")
     if available_rows.empty:
-        return filtered_data.iloc[-1]
+        return data.iloc[-1]
     return available_rows.iloc[-1]
 
 
@@ -367,22 +367,39 @@ def render_header() -> None:
     )
 
 
-def render_metrics(filtered_data: pd.DataFrame) -> None:
-    latest = latest_kpi_row(filtered_data)
+def render_metrics(data: pd.DataFrame) -> None:
+    latest = latest_kpi_row(data)
     st.markdown('<div class="metric-shell">', unsafe_allow_html=True)
-    column_one, column_two, column_three, column_four = st.columns(4)
-    column_one.metric("Seneste uge", latest[COL_WEEK])
-    column_two.metric(
-        "Tests, hele landet",
+    st.caption(f"Seneste uge med plejehjemsdata: {latest[COL_WEEK]}")
+
+    st.markdown("**Hele landet**")
+    country_one, country_two, country_three = st.columns(3)
+    country_one.metric(
+        "Testede",
         format_rate(latest[f"{METRIC_TESTED} ({COUNTRY_LABEL})"]),
     )
-    column_three.metric(
-        "Positive, plejehjem",
+    country_two.metric(
+        "Positive",
+        format_rate(latest[f"{METRIC_POSITIVE} ({COUNTRY_LABEL})"]),
+    )
+    country_three.metric(
+        "Døde",
+        format_rate(latest[f"{METRIC_DEATHS} ({COUNTRY_LABEL})"]),
+    )
+
+    st.markdown("**Plejehjem**")
+    care_one, care_two, care_three = st.columns(3)
+    care_one.metric(
+        "Testede",
+        format_rate(latest[f"{METRIC_TESTED} ({CARE_HOME_LABEL})"]),
+    )
+    care_two.metric(
+        "Positive",
         format_rate(latest[f"{METRIC_POSITIVE} ({CARE_HOME_LABEL})"]),
     )
-    column_four.metric(
-        "Døde, hele landet",
-        format_rate(latest[f"{METRIC_DEATHS} ({COUNTRY_LABEL})"]),
+    care_three.metric(
+        "Døde",
+        format_rate(latest[f"{METRIC_DEATHS} ({CARE_HOME_LABEL})"]),
     )
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -428,7 +445,7 @@ def main() -> None:
         st.warning("Ingen data i den valgte periode.")
         return
 
-    render_metrics(filtered_data)
+    render_metrics(dashboard_data)
     st.markdown(
         """
         <div class="chart-caption">
