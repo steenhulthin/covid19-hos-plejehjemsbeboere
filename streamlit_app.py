@@ -89,132 +89,12 @@ COMMON_MOJIBAKE_REPLACEMENTS = {
     "Ã…": "Å",
 }
 
-def hex_to_rgba(color: str, alpha: float) -> str:
-    value = color.lstrip("#")
-    if len(value) != 6:
-        return color
-    red = int(value[0:2], 16)
-    green = int(value[2:4], 16)
-    blue = int(value[4:6], 16)
-    return f"rgba({red}, {green}, {blue}, {alpha})"
-
-
-def get_theme_colors() -> dict[str, str]:
-    is_dark_theme = (st.get_option("theme.base") or "light").lower() == "dark"
-    text = st.get_option("theme.textColor") or ("#e5eef7" if is_dark_theme else "#11212a")
-    primary = st.get_option("theme.primaryColor") or "#2563eb"
-    red = st.get_option("theme.redColor") or "#dc2626"
-    background = st.get_option("theme.backgroundColor") or ("#0f172a" if is_dark_theme else "#f8fbfc")
-    secondary_background = st.get_option("theme.secondaryBackgroundColor") or (
-        "#111827" if is_dark_theme else "#ffffff"
-    )
-    sidebar_background = st.get_option("theme.sidebar.backgroundColor") or secondary_background
-    border = st.get_option("theme.borderColor") or (
-        "rgba(148, 163, 184, 0.24)" if is_dark_theme else "rgba(17, 33, 42, 0.08)"
-    )
-    muted_text = hex_to_rgba(text, 0.78 if is_dark_theme else 0.72)
-    axis = hex_to_rgba(text, 0.7 if is_dark_theme else 0.82)
-    grid = hex_to_rgba(text, 0.18 if is_dark_theme else 0.12)
-    zero = hex_to_rgba(text, 0.22 if is_dark_theme else 0.18)
-    shadow = "rgba(2, 6, 23, 0.42)" if is_dark_theme else "rgba(15, 23, 42, 0.08)"
-
-    return {
-        "app_background": (
-            f"radial-gradient(circle at top left, {hex_to_rgba(primary, 0.18 if is_dark_theme else 0.12)}, transparent 32%),"
-            f"radial-gradient(circle at top right, {hex_to_rgba(red, 0.16 if is_dark_theme else 0.10)}, transparent 28%),"
-            f"linear-gradient(180deg, {background} 0%, {background} 100%)"
-        ),
-        "text": text,
-        "muted_text": muted_text,
-        "sidebar_background": hex_to_rgba(sidebar_background, 0.82 if is_dark_theme else 0.8),
-        "surface_background": (
-            f"linear-gradient(135deg, {hex_to_rgba(secondary_background, 0.94 if is_dark_theme else 0.95)}, "
-            f"{hex_to_rgba(background, 0.90 if is_dark_theme else 0.90)})"
-        ),
-        "metric_background": hex_to_rgba(secondary_background, 0.9 if is_dark_theme else 0.88),
-        "plot_background": hex_to_rgba(secondary_background, 0.78 if is_dark_theme else 0.82),
-        "border": border,
-        "shadow": shadow,
-        "axis": axis,
-        "grid": grid,
-        "zero": zero,
-        "primary": primary,
-        "red": red,
-    }
-
-
-THEME_COLORS = get_theme_colors()
-CHART_COLORS = {
-    COUNTRY_LABEL: THEME_COLORS["primary"],
-    CARE_HOME_LABEL: THEME_COLORS["red"],
-}
-
-
 st.set_page_config(
     page_title="Covid-19 hos plejehjemsbeboere i Danmark",
     page_icon="🦠",
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
-
-def apply_custom_style() -> None:
-    st.markdown(
-        (
-            """
-            <style>
-                .stApp {{
-                    background: {app_background};
-                    color: {text};
-                    font-family: "Aptos", "Segoe UI", sans-serif;
-                }}
-                [data-testid="stSidebar"] {{
-                    background: {sidebar_background};
-                    backdrop-filter: blur(10px);
-                    border-right: 1px solid {border};
-                }}
-                .hero {{
-                    padding: 1.8rem 2rem;
-                    border: 1px solid {border};
-                    border-radius: 24px;
-                    background: {surface_background};
-                    box-shadow: 0 18px 45px {shadow};
-                    margin-bottom: 1rem;
-                }}
-                .hero h1 {{
-                    margin: 0;
-                    font-size: 2.2rem;
-                    line-height: 1.15;
-                    font-family: "Bahnschrift", "Aptos", sans-serif;
-                    color: {text};
-                }}
-                .hero p {{
-                    margin: 0.7rem 0 0;
-                    max-width: 65rem;
-                    color: {muted_text};
-                    font-size: 1rem;
-                }}
-                .metric-shell {{
-                    padding: 0.2rem 0 1rem;
-                }}
-                [data-testid="metric-container"] {{
-                    background: {metric_background};
-                    border: 1px solid {border};
-                    padding: 0.9rem 1rem;
-                    border-radius: 18px;
-                    box-shadow: 0 12px 26px {shadow};
-                }}
-                .chart-caption {{
-                    color: {muted_text};
-                    font-size: 0.9rem;
-                    margin-top: -0.3rem;
-                    margin-bottom: 1rem;
-                }}
-            </style>
-            """
-        ).format(**THEME_COLORS),
-        unsafe_allow_html=True,
-    )
 
 
 def week_label(year: int, week_number: int) -> str:
@@ -422,7 +302,6 @@ def build_comparison_figure(data: pd.DataFrame, metric_name: str, chart_title: s
                 y=data[column_name],
                 mode="lines",
                 name=series_name,
-                line={"color": CHART_COLORS[series_name], "width": 3},
                 customdata=data[[COL_WEEK]],
                 hovertemplate=(
                     "%{customdata[0]}<br>"
@@ -437,7 +316,6 @@ def build_comparison_figure(data: pd.DataFrame, metric_name: str, chart_title: s
         template="plotly_white",
         height=430,
         hovermode="x unified",
-        font={"color": THEME_COLORS["text"]},
         legend={
             "orientation": "h",
             "yanchor": "bottom",
@@ -447,23 +325,15 @@ def build_comparison_figure(data: pd.DataFrame, metric_name: str, chart_title: s
         },
         margin={"l": 12, "r": 12, "t": 64, "b": 12},
         paper_bgcolor="rgba(255,255,255,0)",
-        plot_bgcolor=THEME_COLORS["plot_background"],
     )
     figure.update_xaxes(
         title="Uge",
         tickformat="%Y",
         showgrid=False,
-        linecolor=THEME_COLORS["axis"],
-        tickfont={"color": THEME_COLORS["text"]},
-        title_font={"color": THEME_COLORS["text"]},
     )
     figure.update_yaxes(
         title="Pr. 100.000 borgere/beboere",
         zeroline=True,
-        zerolinecolor=THEME_COLORS["zero"],
-        gridcolor=THEME_COLORS["grid"],
-        tickfont={"color": THEME_COLORS["text"]},
-        title_font={"color": THEME_COLORS["text"]},
     )
     return figure
 
@@ -530,7 +400,6 @@ def render_sources() -> None:
 
 
 def main() -> None:
-    apply_custom_style()
     render_header()
 
     try:
