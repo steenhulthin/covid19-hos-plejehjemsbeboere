@@ -460,6 +460,7 @@ def main() -> None:
         METRIC_TESTED,
         METRIC_TESTED,
     )
+    st.divider()
     st.plotly_chart(test_figure, width="stretch")
 
     positive_figure = build_comparison_figure(
