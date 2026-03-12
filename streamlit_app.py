@@ -358,7 +358,7 @@ def render_header() -> None:
             <h1>Covid-19 hos plejehjemsbeboere i Danmark</h1>
             <p>
                 Sammenligning af smitteudviklingen i hele landet og blandt plejehjemsbeboere.
-                Landskurverne er aggregeret på tværs af køn som gennemsnit af rater pr. 100.000,
+                Landskurverne er aggregeret på tværs af køn som gennemsnit af rater pr. 100.000 (incidens),
                 landsdødsfald summeres til ISO-uger og normaliseres med 6.000.000 borgere,
                 og plejehjemstal er normaliseret med 55.600 beboere.
             </p>
@@ -460,7 +460,7 @@ def main() -> None:
     st.markdown(
         """
         <div class="chart-caption">
-            Sammenligningen viser ugentlige, normaliserede rater pr. 100.000 for hele landet og plejehjemsbeboere.
+            Sammenligningen viser ugentlige, normaliserede rater pr. 100.000 (incidens) for hele landet og plejehjemsbeboere.
         </div>
         """,
         unsafe_allow_html=True,
